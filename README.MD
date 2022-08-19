@@ -16,6 +16,7 @@ This repo contains a Discord bot that is monitoring the SolanaBlockchain.
 ## Current Feature:
 
 - Display current tps (Transactions per Second)
+- Command `!tps` will print out the TPS
 
 ## View
 
@@ -44,7 +45,7 @@ Create 2 Roles in you Discord Server so the bot will change its Nickname color b
 RUST_LOG=error
 DISCORD_TOKEN=<DISCORD_TOKEN>
 RPC_ENDPOINT=<RPC_ENDPOINT>
-LOOP_UPDATE_SLEEP=5
+LOOP_UPDATE_SLEEP=60
 TPS_THRESHOLD=2000
 ```
 
