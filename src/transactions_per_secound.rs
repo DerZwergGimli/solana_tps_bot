@@ -16,7 +16,7 @@ fn get_and_calc_tps(client: RpcClient) -> i64 {
     let client = connect_to_rpc();
     let last_block_height = client.get_block_height().unwrap_or(0);
 
-    let blocks = client.get_blocks_with_limit(last_block_height, 10).unwrap_or(Vec::new());
+    let blocks = client.get_blocks_with_limit(last_block_height, 20).unwrap_or(Vec::new());
 
     if !blocks.is_empty() {
         let mut transactions_count = 0;

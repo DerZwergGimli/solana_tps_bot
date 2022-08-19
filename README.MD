@@ -50,8 +50,8 @@ TPS_THRESHOLD=2000
 
 ## Deploy via Docker
 
-- Copy the `docker-compose.yaml.sample` to `docker-compose.yaml`
-- Add you <DISCORD_TOKEN>
+- Copy `.env.sample` to `.env`
+- Add your access tokens and config to `.env`
 - Start you BOT with `docker-compose up -d`
 
 ### Donations:
