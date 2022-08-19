@@ -69,43 +69,45 @@ async fn set_status_to_current_time(ctx: Arc<Context>, _guilds: Vec<GuildId>) {
     let formatted_time = current_time.to_rfc3339_opts(SecondsFormat::Secs, true);
 
     let tps = get_tps();
-    //SET Name
-    for guild in _guilds.clone() {
-        match guild.edit_nickname(&ctx.http, Some(&*get_tps_string(tps))).await {
-            Ok(_) => { info!("Changed Bot nickname!") }
-            Err(_) => { error!("Unable to change bot nickname!") }
-        }
-    }
-
-    //GET colors
-    let mut red_role_id: RoleId = Default::default();
-    let mut green_role_id: RoleId = Default::default();
-    for guild in _guilds.clone() {
-        let roles = guild.roles(&ctx).await;
-        for (_role_id, role) in roles.expect("no guild roles found!") {
-            if role.name.contains("tickers-red") {
-                red_role_id = role.id;
-            }
-            if role.name.contains("tickers-green") {
-                green_role_id = role.id;
+    if tps > 0 {
+        //SET Name
+        for guild in _guilds.clone() {
+            match guild.edit_nickname(&ctx.http, Some(&*get_tps_string(tps))).await {
+                Ok(_) => { info!("Changed Bot nickname!") }
+                Err(_) => { error!("Unable to change bot nickname!") }
             }
         }
-    }
 
-    //Change Bot-Color
-    let threshold = env::var("TPS_THRESHOLD").unwrap_or("2000".to_string()).parse::<i64>().unwrap();
-    for guild in _guilds.clone() {
-        if tps > threshold {
-            guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, red_role_id).await.unwrap();
-            guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, green_role_id).await.unwrap();
-        } else {
-            guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, green_role_id).await.unwrap();
-            guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, red_role_id).await.unwrap();
+        //GET colors
+        let mut red_role_id: RoleId = Default::default();
+        let mut green_role_id: RoleId = Default::default();
+        for guild in _guilds.clone() {
+            let roles = guild.roles(&ctx).await;
+            for (_role_id, role) in roles.expect("no guild roles found!") {
+                if role.name.contains("tickers-red") {
+                    red_role_id = role.id;
+                }
+                if role.name.contains("tickers-green") {
+                    green_role_id = role.id;
+                }
+            }
         }
+
+        //Change Bot-Color
+        let threshold = env::var("TPS_THRESHOLD").unwrap_or("2000".to_string()).parse::<i64>().unwrap();
+        for guild in _guilds.clone() {
+            if tps > threshold {
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, red_role_id).await.unwrap();
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, green_role_id).await.unwrap();
+            } else {
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, green_role_id).await.unwrap();
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, red_role_id).await.unwrap();
+            }
+        }
+
+
+        ctx.set_activity(Activity::playing(&formatted_time)).await;
     }
-
-
-    ctx.set_activity(Activity::playing(&formatted_time)).await;
 }
 
 #[tokio::main]
