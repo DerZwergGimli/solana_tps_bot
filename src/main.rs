@@ -14,9 +14,9 @@ use serenity::model::id::{ChannelId, GuildId};
 use serenity::model::prelude::RoleId;
 use serenity::prelude::*;
 
-use crate::TransactionsPerSecound::{get_tps, get_tps_string};
+use crate::transactions_per_secound::{get_tps, get_tps_string};
 
-mod TransactionsPerSecound;
+mod transactions_per_secound;
 
 struct Handler {
     is_loop_running: AtomicBool,
@@ -37,7 +37,7 @@ impl EventHandler for Handler {
             if let Err(why) = msg.channel_id.say(&ctx.http, message).await {
                 eprintln!("Error sending message: {:?}", why);
             }
-            typing.stop();
+            let _ = typing.stop();
         }
     }
 
@@ -55,7 +55,7 @@ impl EventHandler for Handler {
             tokio::spawn(async move {
                 loop {
                     set_status_to_current_time(Arc::clone(&ctx2), _guilds.clone()).await;
-                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    tokio::time::sleep(Duration::from_secs(env::var("LOOP_UPDATE_SLEEP").unwrap_or("60".to_string()).parse::<u64>().unwrap_or(60))).await;
                 }
             });
 
