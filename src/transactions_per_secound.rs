@@ -45,8 +45,12 @@ fn get_and_calc_tps(client: RpcClient) -> i64 {
                 0
             }
         };
-
-        transactions_count / (time_block_last as i64 - time_block_first as i64)
+        if transactions_count > 0 && time_block_first > 0 && time_block_last > 0 {
+            transactions_count / (time_block_last as i64 - time_block_first as i64)
+        } else {
+            error!("unable to calculate tps cause there is a 0 division");
+            0
+        }
     } else {
         error!("unable to get TPS");
         0

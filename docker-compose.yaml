@@ -1,7 +1,7 @@
 version: '2'
 services:
   sol_status_bot:
-    image: derzwerggimli/solana_tps_bot
+    image: derzwerggimli/solana_tps_bot:latest
     restart: always
     environment:
       - RUST_LOG=${RUST_LOG}
