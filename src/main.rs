@@ -97,11 +97,11 @@ async fn set_status_to_current_time(ctx: Arc<Context>, _guilds: Vec<GuildId>) {
         let threshold = env::var("TPS_THRESHOLD").unwrap_or("2000".to_string()).parse::<i64>().unwrap();
         for guild in _guilds.clone() {
             if tps > threshold {
-                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, red_role_id).await.unwrap();
-                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, green_role_id).await.unwrap();
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, red_role_id).await.unwrap_or_default();
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, green_role_id).await.unwrap_or_default();
             } else {
-                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, green_role_id).await.unwrap();
-                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, red_role_id).await.unwrap();
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().remove_role(&ctx, green_role_id).await.unwrap_or_default();
+                guild.member(&ctx.http, &ctx.cache.current_user_id()).await.unwrap().add_role(&ctx, red_role_id).await.unwrap_or_default();
             }
         }
 
